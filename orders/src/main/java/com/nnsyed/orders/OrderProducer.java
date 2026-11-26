@@ -4,31 +4,29 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OrderProducer {
-
-    private final KafkaTemplate<String, String> kafkaTemplate;
-
-    public OrderProducer(
-            KafkaTemplate<String, String> kafkaTemplate) {
+public class OrderProducer 
+{
+    private final KafkaTemplate<String, OrderEvent> kafkaTemplate;
+    public OrderProducer(KafkaTemplate<String, OrderEvent> kafkaTemplate) 
+    {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendOrder(String orderId) {
-
-        String message = "Order created: " + orderId;
-
-        // Asynchronously publish message to Kafka
-        kafkaTemplate.send("orders", orderId, message)
+    public void sendOrder(OrderEvent event) 
+    {
+        kafkaTemplate.send("orders", event.orderId(), event)
             .whenComplete((result, exception) -> {
-
-                if (exception == null) {
-                    System.out.println(
-                        "Message published: " + message);
-                } else {
-                    System.err.println(
-                        "Publishing failed: " +
-                        exception.getMessage());
+                if (exception == null) 
+                {
+                    System.out.println("Published: " + event);
+                    System.out.println("Partition: " + result.getRecordMetadata().partition());
+                    System.out.println("Offset: " + result.getRecordMetadata().offset());
+                } 
+                else 
+                {
+                    System.err.println("Publishing failed: " + exception.getMessage());
                 }
             });
     }
 }
+

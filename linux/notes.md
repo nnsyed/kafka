@@ -78,6 +78,17 @@ orders
 
 ./kafka-console-consumer.sh --topic orders --bootstrap-server localhost:9092 --from-beginning
 
-s
+# deleting topics
+/opt/kafka/bin/kafka-topics.sh --delete --topic orders --bootstrap-server localhost:9092
+
+#
+bash-5.1# ./kafka-topics.sh --create --topic orders --bootstrap-server localhost:9092 --partitions 3 --replication-factor 1
+Created topic orders.
+
+bash-5.1# ./kafka-consumer-groups.sh --list --bootstrap-server localhost:9092
+payment-group
+notification-group
+inventory-group
+
 
 
